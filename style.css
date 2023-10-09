@@ -8,4 +8,5 @@ body, html {
 
 canvas {
     border: 1px solid black;
+    filter: blur(5px); /* Adjust the blur value as needed */
 }

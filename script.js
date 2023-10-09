@@ -98,7 +98,7 @@ class Ball {
         const maxDistance = 150; // Maximum distance for attraction to work
 
         if (distance > minDistance && distance < maxDistance) {
-            var force = 0.5 / distance;
+            var force = 0.1 / distance;
             if (mouse.isPressed) {
                 force = 2.0 / distance;
             }
