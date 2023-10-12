@@ -168,10 +168,6 @@ for (let i = 0; i < numBalls; i++) {
     balls.push(new Ball(x, y, radius, r, g, b, dx, dy, 1.0 - radius * 0.075 / 25.0));
 }
 
-
-
-
-
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
