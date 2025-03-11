@@ -380,6 +380,108 @@ target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
+    <link itemprop="mainEntityOfPage" href="http://blog.guiduo.link/2025/03/11/blog-build-log/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fu Guiduo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guiduo's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/11/blog-build-log/" class="post-title-link" itemprop="url">博客搭建日志</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2025-03-11 00:00:00 / Modified: 17:52:38" itemprop="dateCreated datePublished" datetime="2025-03-11T00:00:00+08:00">2025-03-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%97%A5%E5%BF%97/" itemprop="url" rel="index"><span itemprop="name">日志</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="框架选择">框架选择</h1>
+<p>之前搭建过一次博客，选用的是 hexo 框架，主要就是支持 markdown
+笔记比较方便，可以本地静态生成，然后送到 github 上之后只需要 github
+actions 里面放一个静态部署到 githup pages 的工作流即可。</p>
+<p>所以这次还是选择 hexo + next
+来搭建博客。找工作是真的难，什么都要准备好，搭建博客也是比较耗费时间的，因为需要调整样式还有踩坑。</p>
+<p>比如深色模式还有博客背景动效，一些内容的填充等等。域名的解析和配置，也都比较重要。</p>
+<h1 id="踩坑记录">踩坑记录</h1>
+<ol type="1">
+<li>nodejs 安装的包如果存在可执行文件，则放在 <code>.bin</code>
+目录下，所以 hexo 框架是可以局部安装的，而不一定需要安装到 nodejs 的全局
+<code>.bin</code> 目录，方便管理</li>
+<li>默认的 hexo-github-deploy 插件，并不会生成静态部署的 github
+actions，所以如果是手动在网页的 git
+仓库上操作部署执行，则下一次将本地的文章页面仓库推送到远端的时候，又会把
+github actions 覆盖掉，变成空。因此需要在本地将 github 的静态页面部署
+actions 复制一份放到 <code>.github/workflows</code> 目录下，这样
+<code>hexo d</code>
+部署本地页面到远端仓库的时候才会自动触发，将更新后的页面部署到 github
+pages</li>
+<li>vercel 用于克隆托管 github pages 仓库，因为 github
+不开梯子国内是无法访问到的，但是 cloudflare 国内是可以直连的，vercel
+应该也是，所以可以在 cloudflare 上配置域名解析到 vercel
+的页面仓库，这样国内也可以直接访问博客啦</li>
+<li>Next 主题现在已经直接将 <code>darkmode.js</code>
+作为神色主题切换的选项了，不需要自己将 <code>darkmode.js</code>
+下载到主题的 <code>source/lib</code>
+目录下做本地依赖（有可能是插件帮我们做了这件事情）</li>
+<li><code>darkmode.js</code> 的深色模式并没有同步 next
+主题代码块深色模式，所以还是不好看，可以默认把代码块设置成深色模式，这样切换了深色模式也比较匹配</li>
+<li>markdown
+笔记内的图片链接，可能需要额外写一个脚本转换成图床的链接？或者不知道可不可以把笔记仓库的图像文件夹直接复制到
+hexo 下，但是估计不行，太多笔记了，图像文件估计都要几个 GB
+，不太适合同步到博客文章仓库，最好还是本地写笔记的时候上传到图床，然后博客发布的时候把本地的相对图像链接转成图床链接</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
 
@@ -446,9 +548,13 @@ target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
       </div>
   </nav>
 </div>
