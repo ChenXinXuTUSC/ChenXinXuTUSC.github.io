@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-corner-indicator.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.guiduo.link","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="参考刘丹冰《深入理解 Go 语言》一书实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Epoll 实现的 Echo 回响服务">
+<meta property="og:url" content="http://blog.guiduo.link/2025/03/11/epoll-echo-service/index.html">
+<meta property="og:site_name" content="Guiduo&#39;s Blog">
+<meta property="og:description" content="参考刘丹冰《深入理解 Go 语言》一书实现">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-03-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-03-11T15:58:45.033Z">
+<meta property="article:author" content="Fu Guiduo">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.guiduo.link/2025/03/11/epoll-echo-service/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh'
+  };
+</script>
+
+  <title>使用 Epoll 实现的 Echo 回响服务 | Guiduo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Guiduo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A little place to record my path</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/ChenXinXuTUSC" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
+    <link itemprop="mainEntityOfPage" href="http://blog.guiduo.link/2025/03/11/epoll-echo-service/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fu Guiduo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guiduo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Epoll 实现的 Echo 回响服务
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2025-03-11 00:00:00 / Modified: 23:58:45" itemprop="dateCreated datePublished" datetime="2025-03-11T00:00:00+08:00">2025-03-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Demo/" itemprop="url" rel="index"><span itemprop="name">Demo</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">参考刘丹冰《深入理解 Go 语言》一书实现</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Linux 的 IO
+多路复用中，所谓的复用，意思是复用一个线程或者进程，多个网络或者文件 IO
+就绪的时候无需开多个进程或者线程来处理。</p>
+<p>select、poll、epoll 都是同步阻塞型 IO ，一句话概括三者的区别： -
+select - 内核帮忙轮询处理应用进程要求的文件描述符 IO
+是否就绪，一旦存在任何就绪 IO ，调用 select
+的应用进程从阻塞休眠中唤醒，自行遍历所有文件描述符查找可读写
+fd（文件描述符）。 - poll - select 最大只支持 1024 个 fd 的监控，poll
+解除了这个限制，其他并无二样 - epoll -
+相比于前两者服务更加周到，不仅使得调用 epoll 的应用进程在存在就绪 IO
+的时候从阻塞休眠中唤醒，并且返回所有就绪事件的数组给应用进程，每个事件中包含了该事件的状态（<code>EPOLLIN</code>
+或者 <code>EPOLLOUT</code>），以及该事件关联的 fd
+，由应用进程自行处理每个就绪的 fd IO</p>
+<h2 id="使用-epoll-的回响服务器实现">使用 epoll 的回响服务器实现</h2>
+<p>使用 epoll 的两个最重要的系统接口： -
+<code>epoll_create(int fd_size)</code> ：创建一个 epoll
+监听入口的句柄，这是和内核 epoll 红黑树唯一联系的符号 -
+<code>epoll_ctl(epfd, FLAG, *event)</code> ：对指定的 epoll
+句柄执行的操作，包括添加监听事件和移除监听事件，以及修改某个事件的监听状态（对哪种事件类型更感兴趣）</p>
+<h3 id="服务端">服务端</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ctype.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;clog.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SERVER_PORT 7778</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> EPOLL_FD_MAX_NUM 2048</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_MAX_LEN 4096</span></span><br><span class="line"></span><br><span class="line"><span class="type">char</span> buffer[BUFFER_MAX_LEN];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">str_to_upper</span><span class="params">(<span class="type">char</span>* str)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(str); ++i)</span><br><span class="line">        str[i] = <span class="built_in">toupper</span>(str[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> listen_fd = <span class="number">0</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">server_addr</span>;</span></span><br><span class="line"></span><br><span class="line">    listen_fd = socket(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    server_addr.sin_family = AF_INET;</span><br><span class="line">    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    server_addr.sin_port = htons(SERVER_PORT);</span><br><span class="line">    <span class="keyword">if</span> (bind(listen_fd, (<span class="keyword">struct</span> sockaddr*)&amp;server_addr, <span class="keyword">sizeof</span>(server_addr)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to bind socket, server port: %d&quot;</span>, SERVER_PORT);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (listen(listen_fd, <span class="number">10</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to listen on fd: %d&quot;</span>, listen_fd);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// create epoll list</span></span><br><span class="line">    <span class="type">int</span> epfd = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ((epfd = epoll_create(EPOLL_FD_MAX_NUM)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to create epoll list&quot;</span>);</span><br><span class="line">        <span class="keyword">goto</span> END;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// add listen_fd to epoll list, at the beginning, there is only one</span></span><br><span class="line">    <span class="comment">// event to monitor in the epoll tree, that&#x27;s the listen gateway</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">listen_event</span>;</span></span><br><span class="line">    listen_event.data.fd = listen_fd;</span><br><span class="line">    listen_event.events = EPOLLIN;</span><br><span class="line">    <span class="keyword">if</span> (epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &amp;listen_event) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to add listen event to epoll tree&quot;</span>);</span><br><span class="line">        <span class="keyword">goto</span> END;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// create array for receiving I/O events</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span>* <span class="title">event_list</span>;</span></span><br><span class="line">    event_list = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> epoll_event) * EPOLL_FD_MAX_NUM);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> client_fd = <span class="number">0</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">client_addr</span>;</span></span><br><span class="line">    <span class="type">socklen_t</span> client_len;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">client_event</span>;</span></span><br><span class="line"></span><br><span class="line">    LOG(INFO, <span class="string">&quot;listening on: %d&quot;</span>, SERVER_PORT);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// epoll wait, -1 means block forever until any IO event</span></span><br><span class="line">        <span class="type">int</span> active_fd_cnt = epoll_wait(epfd, event_list, EPOLL_FD_MAX_NUM, <span class="number">-1</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; active_fd_cnt; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// if the event is listen event then add new client</span></span><br><span class="line">            <span class="comment">// connection fd to epoll tree</span></span><br><span class="line">            <span class="keyword">if</span> (event_list[i].data.fd == listen_fd)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// accept connection</span></span><br><span class="line">                client_len = <span class="keyword">sizeof</span> client_addr;</span><br><span class="line">                client_fd = accept(listen_fd, (<span class="keyword">struct</span> sockaddr*)&amp;client_addr, &amp;client_len);</span><br><span class="line">                <span class="keyword">if</span> (client_fd &lt; <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    LOG(ERRO, <span class="string">&quot;failed to accept new connection on listen gateway: %d, err: %s&quot;</span>, listen_fd, strerror(errno));</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">char</span> ip[<span class="number">48</span>];</span><br><span class="line">                LOG(INFO, <span class="string">&quot;new client: [%s:%d]&quot;</span>, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));</span><br><span class="line"></span><br><span class="line">                client_event.data.fd = client_fd;</span><br><span class="line">                client_event.events = EPOLLIN | EPOLLET; <span class="comment">// EPOLLET means edge triger type, event will only be triggered once</span></span><br><span class="line">                epoll_ctl(epfd, EPOLL_CTL_ADD, client_fd, &amp;client_event);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (event_list[i].events &amp; EPOLLIN)</span><br><span class="line">            &#123;</span><br><span class="line">                client_fd = event_list[i].data.fd;</span><br><span class="line">                <span class="comment">// readable event</span></span><br><span class="line">                LOG(INFO, <span class="string">&quot;%d EPOLLIN&quot;</span>, client_fd);</span><br><span class="line">                <span class="type">int</span> read_len = read(client_fd, buffer, BUFFER_MAX_LEN<span class="number">-1</span>);</span><br><span class="line">                <span class="keyword">if</span> (read_len &lt; <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    LOG(ERRO, <span class="string">&quot;read [client#%d] error: %s&quot;</span>, client_fd, strerror(errno));</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (read_len == <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    LOG(INFO, <span class="string">&quot;[client#%d] disconnected...&quot;</span>, client_fd);</span><br><span class="line">                    epoll_ctl(epfd, EPOLL_CTL_DEL, client_fd, &amp;client_event);</span><br><span class="line">                    close(client_fd);</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                buffer[read_len] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;[client#%d]: %s\n&quot;</span>, client_fd, buffer);</span><br><span class="line">                <span class="comment">// echo back with upper</span></span><br><span class="line">                str_to_upper(buffer);</span><br><span class="line">                write(client_fd, buffer, read_len);</span><br><span class="line">                LOG(DBUG, <span class="string">&quot;write %d byte(s)&quot;</span>, read_len);</span><br><span class="line">                <span class="built_in">memset</span>(buffer, <span class="number">0</span>, BUFFER_MAX_LEN);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (event_list[i].events &amp; EPOLLOUT)</span><br><span class="line">            &#123;</span><br><span class="line">                client_fd = event_list[i].data.fd;</span><br><span class="line">                LOG(INFO, <span class="string">&quot;%d EPOLLOUT&quot;</span>, client_fd);</span><br><span class="line">                <span class="comment">// not implemented, the server is an echo server</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    END:</span><br><span class="line">    close(epfd);</span><br><span class="line">    close(listen_fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考《深入理解 Go 语言》- 刘丹冰 中对 Linux IO
+多路复用一节的介绍，主要是利用 epoll
+来替代多进程管理连接，如果每来一个客户端连接就创建一个进程，那么服务器的资源很快就会消耗殆尽，因为一个进程占用的资源实在是太多了；多线程服务器也许是一个不错的选择，不过这和利用内核提供的
+epoll 机制也差不多，哪个事件/线程就绪就去处理哪个，可能多线程服务器还比
+epoll 在客户端的响应上要好一点。</p>
+<p>另外在照着书上的代码实现的时候，发现有一些地方写的不太好，比如对用户输入输出的提示之类的。以及获取用户连接的
+ip 地址和端口，实际上这里有一个点需要注意，那就是接受客户端连接的
+<code>accept</code> 调用要求的第三个参数 <code>addr_len</code> ，发现 C
+很多参数的传递都是利用指针来传递，可能是为了减少参数拷贝的性能开销，第三个参数一定要设置成
+<code>sizeof client_addr</code>
+之后，后续对该地址的读写才能有效！否则读出来的数据都是 零值 。</p>
+<p>epoll 多路复用单进程单线程服务器的思路是，最开始加入到 epoll
+事件红黑树中的只有监听套接字 fd ，只监听这个 fd
+上的可读状态，直到第一个客户端连接到来，<code>accept</code>
+之后系统内核创建了该 tcp 连接所需的套接字文件并将该套接字的 fd 通过函数
+<code>accept</code> 的返回值返回给用户应用进程
+，此时由用户进程负责保管并维护该 fd ，当前的实现做法是将该 fd
+放入内核提供的 epoll 红黑树中，由 epoll
+来负责帮我们完成事件的监听，之后每来一个监听套接字 fd
+上的可读事件，我们就 <code>accept</code>
+创建新的客户端连接并将新的连接放入 epoll 红黑树中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client_event.events = EPOLLIN | EPOLLET; <span class="comment">// EPOLLET means edge triger type, event will only be triggered once</span></span><br></pre></td></tr></table></figure>
+<p>这段代码的意思是，客户端连接使用上升沿触发（Edge
+Trigger），而不是水平触发，关于上升沿和水平其实是数字电路信号中的知识，一个电压信号从低电压上升为高电压的瞬间成为上升沿，同理高电压变为低电压的瞬间是下降沿，一个上升沿在当前的预警中就是一个客户端的可读事件到来，如果这个数据一直没有被处理则电压水平保持高电平，如果选择了水平触发，则只要是高电平的信号，都会被
+epoll 捕获到一直放在就绪队列中，当前的实现选择了边沿触发，也就是当前
+<code>epoll_wait</code> 返回的就绪事件中，如果某个事件未处理，则下一次
+<code>epoll_wait</code>
+结束阻塞之后它不会被返回，尽管他有未处理的数据，直到该 fd
+下一次数据到来的电压变化被 epoll
+捕获，才会再次被放入就绪队列被用户进程看到进而处理，这是一种合理的选择，有些数据我们并不急着处理，而是处理刚刚到来的数据。</p>
+<h3 id="客户端">客户端</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;strings.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;clog.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_LINE_LEN 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SERVER_PORT 7778</span></span><br><span class="line"></span><br><span class="line"><span class="type">char</span> buffer[MAX_LINE_LEN];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">set_nonblocking</span><span class="params">(<span class="type">int</span> fd)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> opts = <span class="number">0</span>;</span><br><span class="line">    opts = fcntl(fd, F_GETFL);</span><br><span class="line">    opts = opts | O_NONBLOCK;</span><br><span class="line">    fcntl(fd, F_SETFL);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;usage %s &lt;server_ip&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> sockfd;</span><br><span class="line">    <span class="keyword">if</span> ((sockfd = socket(AF_INET, SOCK_STREAM, <span class="number">0</span>)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to create socket fd: %s\n&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="built_in">exit</span>(errno);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">server_addr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;server_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(server_addr));</span><br><span class="line">    server_addr.sin_family = AF_INET;</span><br><span class="line">    server_addr.sin_port = htons(SERVER_PORT);</span><br><span class="line">    <span class="keyword">if</span> (inet_pton(AF_INET, argv[<span class="number">1</span>], &amp;server_addr.sin_addr) &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to convert given ipv4 address: %s&quot;</span>, argv[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(errno);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// connect to server</span></span><br><span class="line">    <span class="keyword">if</span> (connect(sockfd, (<span class="keyword">struct</span> sockaddr*)&amp;server_addr, <span class="keyword">sizeof</span> server_addr) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LOG(ERRO, <span class="string">&quot;failed to connect to server: %s&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="built_in">exit</span>(errno);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    set_nonblocking(sockfd);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> tx_len;</span><br><span class="line">    <span class="type">int</span> rx_len;</span><br><span class="line">    <span class="type">int</span> bt_cnt;</span><br><span class="line">    <span class="keyword">while</span> (fgets(buffer, MAX_LINE_LEN, <span class="built_in">stdin</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[client]: %s\n&quot;</span>, buffer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// send data to server</span></span><br><span class="line">        tx_len = send(sockfd, buffer, <span class="built_in">strlen</span>(buffer), <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span> (tx_len &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            LOG(ERRO, <span class="string">&quot;error sending message: %s&quot;</span>, strerror(errno));</span><br><span class="line">            <span class="built_in">exit</span>(errno);</span><br><span class="line">        &#125;</span><br><span class="line">        LOG(INFO, <span class="string">&quot;send %d byte(s)&quot;</span>, tx_len);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// read back echo data</span></span><br><span class="line">        rx_len = <span class="number">0</span>;</span><br><span class="line">        bt_cnt = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (tx_len &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            bt_cnt = read(sockfd, buffer + rx_len, MAX_LINE_LEN - rx_len - <span class="number">1</span>);</span><br><span class="line">            rx_len += bt_cnt;</span><br><span class="line">            tx_len -= rx_len;</span><br><span class="line">            LOG(DBUG, <span class="string">&quot;read %d byte(s)&quot;</span>, rx_len);</span><br><span class="line">        &#125;</span><br><span class="line">        buffer[rx_len] = <span class="string">&#x27;\0&#x27;</span>; <span class="comment">// `read` won&#x27;t help you set the terminator</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[server]: %s\n&quot;</span>, buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    close(sockfd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端就是正常的 socket 编程，没什么特殊的。</p>
+<h3 id="输出示例">输出示例</h3>
+<p>服务端： <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">┌[fredom@hcss-ecs-1c01 16:02:02] ~/workspace/playground-cpp/epoll-demo</span><br><span class="line">└&gt; ./build/bin/Debug/epoll-svr</span><br><span class="line">[INFO] listening on: 7778</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 75</span><br><span class="line"></span><br><span class="line">[INFO] new client: [127.0.0.1:49886]</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 95</span><br><span class="line"></span><br><span class="line">[INFO] 5 EPOLLIN</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 108</span><br><span class="line"></span><br><span class="line">[client#5]: abc</span><br><span class="line"></span><br><span class="line">[DBUG] write 4 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 127</span><br><span class="line"></span><br><span class="line">[INFO] 5 EPOLLIN</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 108</span><br><span class="line"></span><br><span class="line">[client#5]: hello jack</span><br><span class="line"></span><br><span class="line">[DBUG] write 11 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 127</span><br><span class="line"></span><br><span class="line">[INFO] new client: [127.0.0.1:59326]</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 95</span><br><span class="line"></span><br><span class="line">[INFO] 6 EPOLLIN</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 108</span><br><span class="line"></span><br><span class="line">[client#6]: what</span><br><span class="line"></span><br><span class="line">[DBUG] write 5 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 127</span><br><span class="line"></span><br><span class="line">[INFO] 6 EPOLLIN</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 108</span><br><span class="line"></span><br><span class="line">[INFO] [client#6] disconnected...</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 117</span><br><span class="line"></span><br><span class="line">[INFO] 5 EPOLLIN</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 108</span><br><span class="line"></span><br><span class="line">[INFO] [client#5] disconnected...</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-svr.c 117</span><br></pre></td></tr></table></figure></p>
+<p>客户端： <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">┌[fredom@hcss-ecs-1c01 16:02:00] ~/workspace/playground-cpp/epoll-demo</span><br><span class="line">└&gt; ./build/bin/Debug/epoll-cli 127.0.0.1</span><br><span class="line">abc</span><br><span class="line">[client]: abc</span><br><span class="line"></span><br><span class="line">[INFO] send 4 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-cli.c 76</span><br><span class="line"></span><br><span class="line">[DBUG] read 4 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-cli.c 86</span><br><span class="line"></span><br><span class="line">[server]: ABC</span><br><span class="line"></span><br><span class="line">hello jack</span><br><span class="line">[client]: hello jack</span><br><span class="line"></span><br><span class="line">[INFO] send 11 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-cli.c 76</span><br><span class="line"></span><br><span class="line">[DBUG] read 11 byte(s)</span><br><span class="line">    /home/fredom/workspace/playground-cpp/epoll-demo/app/epoll-cli.c 86</span><br><span class="line"></span><br><span class="line">[server]: HELLO JACK</span><br></pre></td></tr></table></figure> ## read 和 fgets</p>
+<p><code>read</code>
+是内核提供的一个比较低级的接口，它的功能非常简单，用户进程指定读取流多少字节，它就返回多少字节（除非读到
+EOF 或者发生错误），它不会在读取完毕之后额外帮用户剔除换行符
+<code>'\n'</code> 或者帮用户添加字符串的结束标识符 <code>'\0'</code>
+，大概是因为 <code>read</code>
+专精于字节流的处理，和字符串的概念是不相关的</p>
+<p><code>fgets()</code> 则在检测到换行符 <code>'\n'</code>
+之后结束读取流，并将缓冲的下一个位置设置为字符串结束标识符
+<code>'\0'</code>
+，用户需要自己决定需不需要覆盖掉换行符，<code>fgets()</code>
+把换行符也会读取进缓冲中。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2025/03/11/blog-build-log/" rel="next" title="博客搭建日志">
+      博客搭建日志 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-epoll-%E7%9A%84%E5%9B%9E%E5%93%8D%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">使用 epoll 的回响服务器实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">1.1.</span> <span class="nav-text">服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.2.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">输出示例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fu Guiduo</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fu Guiduo</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '32px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: '#fff',
+  backgroundColor: '#fff',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌗',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>
