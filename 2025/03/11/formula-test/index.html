@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-corner-indicator.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.guiduo.link","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="这是一篇数学公式渲染的测试文章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="公式渲染测试">
+<meta property="og:url" content="http://blog.guiduo.link/2025/03/11/formula-test/index.html">
+<meta property="og:site_name" content="Guiduo&#39;s Blog">
+<meta property="og:description" content="这是一篇数学公式渲染的测试文章">
+<meta property="og:locale">
+<meta property="og:image" content="http://blog.guiduo.link/2025/images/Pasted%20image%2020250102150514.png">
+<meta property="og:image" content="http://blog.guiduo.link/2025/images/Pasted%20image%2020250102150033.png">
+<meta property="article:published_time" content="2025-03-11T06:00:27.389Z">
+<meta property="article:modified_time" content="2025-03-11T06:00:27.389Z">
+<meta property="article:author" content="Fu Guiduo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.guiduo.link/2025/images/Pasted%20image%2020250102150514.png">
+
+<link rel="canonical" href="http://blog.guiduo.link/2025/03/11/formula-test/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh'
+  };
+</script>
+
+  <title>公式渲染测试 | Guiduo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Guiduo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A little place to record my path</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/ChenXinXuTUSC" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
+    <link itemprop="mainEntityOfPage" href="http://blog.guiduo.link/2025/03/11/formula-test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fu Guiduo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guiduo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          公式渲染测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2025-03-11 14:00:27" itemprop="dateCreated datePublished" datetime="2025-03-11T14:00:27+08:00">2025-03-11</time>
+            </span>
+
+          
+            <div class="post-description">这是一篇数学公式渲染的测试文章</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>转载：<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/39363869">浅析机器学习：线性回归
+&amp; 逻辑回归 - 知乎</a></p>
+<h1 id="逻辑回归和线性回归">逻辑回归和线性回归</h1>
+<h3 id="应用场景">1. 应用场景</h3>
+<ul>
+<li><strong>线性回归</strong>：用于预测连续值，如房价、销售额等</li>
+<li><strong>逻辑回归</strong>：用于分类问题，特别是二分类，如判断邮件是否为垃圾邮件</li>
+</ul>
+<h3 id="输出类型">2. 输出类型</h3>
+<ul>
+<li><strong>线性回归</strong>：输出为连续值，范围无限制</li>
+<li><strong>逻辑回归</strong>：输出为概率值，通过Sigmoid函数映射到 [0,
+1] 区间</li>
+</ul>
+<h3 id="模型函数">3. 模型函数</h3>
+<ul>
+<li><strong>线性回归</strong>：使用线性函数<span class="math inline">\(y
+= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_n
+x_n\)</span></li>
+<li><strong>逻辑回归</strong>：使用逻辑函数<span class="math inline">\(p
+= \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots +
+\beta_n x_n)}}\)</span></li>
+</ul>
+<h3 id="损失函数">4. 损失函数</h3>
+<ul>
+<li><strong>线性回归</strong>：通常使用均方误差（MSE）</li>
+<li><strong>逻辑回归</strong>：使用对数损失函数（Log Loss）</li>
+</ul>
+<h3 id="参数估计">5. 参数估计</h3>
+<ul>
+<li><strong>线性回归</strong>：通过最小二乘法估计参数</li>
+<li><strong>逻辑回归</strong>：通过最大似然估计法估计参数</li>
+</ul>
+<h3 id="假设条件">6. 假设条件</h3>
+<ul>
+<li><strong>线性回归</strong>：假设误差项服从正态分布，且自变量与因变量呈线性关系</li>
+<li><strong>逻辑回归</strong>：不要求误差项正态分布，但假设因变量与自变量的对数几率呈线性关系</li>
+</ul>
+<h3 id="多重共线性">7. 多重共线性</h3>
+<ul>
+<li><strong>线性回归</strong>：对多重共线性敏感，可能导致参数估计不稳定</li>
+<li><strong>逻辑回归</strong>：对多重共线性也有一定敏感性，但影响相对较小</li>
+</ul>
+<h3 id="正则化">8. 正则化</h3>
+<ul>
+<li><strong>线性回归</strong>：可通过L1或L2正则化防止过拟合</li>
+<li><strong>逻辑回归</strong>：同样支持L1或L2正则化，常用于高维数据</li>
+</ul>
+<h3 id="总结">总结</h3>
+<ul>
+<li><strong>线性回归</strong>：预测连续值，使用线性函数和均方误差</li>
+<li><strong>逻辑回归</strong>：用于分类，使用逻辑函数和对数损失函数</li>
+</ul>
+<p>根据具体问题选择合适的回归方法。</p>
+<h1 id="从线性回归推广到广义线性回归">从线性回归推广到广义线性回归</h1>
+<p>上面我们得到了线性回归模型的数学原型，在数学上一个特例经常都是归属于一个更普遍或更一般的原型。让我们思考下面这两个回归模型：</p>
+<p><span class="math display">\[ y = \beta X + \epsilon \]</span></p>
+<p><span class="math display">\[ \ln y = \beta X + \epsilon
+\]</span></p>
+<p>左边是我们之前得到的线性回归模型，右边是对数线性回归模型（Log-Linear
+Regression）。从等式的形式来看，对数线性回归与线性回归区别仅在于等式左部，形式依旧是线性回归，但实质上是完成了输入空间
+<span class="math inline">\(X\)</span>
+到输出空间内的非线性映射。这里的对数函数 <span
+class="math inline">\(\ln(\cdot)\)</span>
+，将线性回归模型和真实观测联系起来。通俗地说，原本线性回归模型无法描述的非线性
+<span class="math inline">\(y\)</span> ，套上了一个非线性函数 <span
+class="math inline">\(\ln(\cdot)\)</span> ，就可以描述对数形式的 <span
+class="math inline">\(y\)</span> 了。</p>
+<p><span class="math display">\[ y = g^{-1}(\beta X + \epsilon)
+\]</span></p>
+<p>将以上两个式子综合，写成更一般的形式就是广义线性回归模型（GLM，Generalized
+Linear Model）了。这里的 <span class="math inline">\(g(\cdot)\)</span>
+，即 <span class="math inline">\(\ln(\cdot)\)</span>
+，是一个单调可微函数，称为联系函数（Link
+Function）。显然，前面的线性回归和对数回归都是广义线性回归的特例，根据联系函数的不同，以不同的方式映射，可以是对数，可以是指数，也可以是其他更复杂的函数。</p>
+<h1
+id="理解最小二乘法中的凸函数性质与二阶导零点">理解最小二乘法中的凸函数性质与二阶导零点</h1>
+<p>线性回归使用的参数估计方法是“最小二乘法”，而最小二乘法的实质是试图找到一条直线，使得所有样本点和拟合直线的欧氏距离之和最小。这个寻找的过程简单描述就是：根据凸函数的性质，求其关于β和ε的二阶导的零点。这句话我不是很懂，主要是后半部分那个凸函数性质二阶导零点就是最优的参数点，怎么理解？</p>
+<p>最小二乘法的目标是通过最小化误差平方和来找到最优参数。具体来说：</p>
+<ol type="1">
+<li><p><strong>误差平方和</strong>： 对于线性回归模型 <span
+class="math inline">\(y = X\beta + \epsilon\)</span>
+，误差平方和（SSE）为： <span class="math display">\[
+SSE = \sum_{i=1}^{n} (y_i - X_i \beta)^2
+\]</span> 其中，<span class="math inline">\(y_i\)</span> 是实际值，<span
+class="math inline">\(X_i \beta\)</span> 是预测值。</p></li>
+<li><p><strong>凸函数性质</strong>： SSE 是关于参数<span
+class="math inline">\(\beta\)</span>的二次函数，且其 Hessian
+矩阵（二阶导数矩阵）是正定的，因此 SSE
+是一个凸函数。凸函数的性质保证了其局部最小值就是全局最小值。</p></li>
+<li><p><strong>求导与极值</strong>： 为了找到最小值，我们对 SSE
+关于<span class="math inline">\(\beta\)</span>求导并令导数为零： <span
+class="math display">\[
+\frac{\partial SSE}{\partial \beta} = -2X^T(y - X\beta) = 0
+\]</span> 解这个方程可以得到最优参数估计： <span class="math display">\[
+\hat{\beta} = (X^T X)^{-1} X^T y
+\]</span></p></li>
+<li><p><strong>二阶导与凸函数</strong>： 二阶导数（Hessian 矩阵）为：
+<span class="math display">\[
+\frac{\partial^2 SSE}{\partial \beta^2} = 2X^T X
+\]</span> 由于<span class="math inline">\(X^T X\)</span>是正定的，SSE
+是凸函数，因此导数为零的点就是全局最小值点。</p></li>
+</ol>
+<h3 id="总结-1">总结</h3>
+<ul>
+<li><strong>凸函数性质</strong>：保证了误差平方和函数只有一个全局最小值。</li>
+<li><strong>二阶导零点</strong>：通过求导并令导数为零，可以找到这个最小值点，即最优参数估计。</li>
+</ul>
+<p>这个过程利用了凸函数的性质，确保了我们找到的参数估计是最优的。</p>
+<h1
+id="什么是二阶导数矩阵为什么二阶导数会形成矩阵">什么是二阶导数矩阵？为什么二阶导数会形成矩阵？</h1>
+<h3 id="二阶导数矩阵hessian-矩阵">二阶导数矩阵（Hessian 矩阵）</h3>
+<p>在多元函数中，二阶导数矩阵（Hessian
+矩阵）是一个非常重要的概念，它描述了函数在各个方向上的曲率。具体来说：</p>
+<ol type="1">
+<li><p><strong>定义</strong>： 对于一个多元函数 <span
+class="math inline">\(f(x_1, x_2, \dots, x_n)\)</span>，其 Hessian 矩阵
+$H $ 是一个 <span class="math inline">\(n\times n\)</span>
+的矩阵，其中每个元素是函数的二阶偏导数： <span class="math display">\[
+H_{ij} = \frac{\partial^2 f}{\partial x_i \partial x_j}
+\]</span> 因此，Hessian 矩阵可以表示为： <span class="math display">\[
+H = \begin{bmatrix}
+\frac{\partial^2 f}{\partial x_1^2} &amp; \frac{\partial^2 f}{\partial
+x_1 \partial x_2} &amp; \cdots &amp; \frac{\partial^2 f}{\partial x_1
+\partial x_n} \\
+\frac{\partial^2 f}{\partial x_2 \partial x_1} &amp; \frac{\partial^2
+f}{\partial x_2^2} &amp; \cdots &amp; \frac{\partial^2 f}{\partial x_2
+\partial x_n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\frac{\partial^2 f}{\partial x_n \partial x_1} &amp; \frac{\partial^2
+f}{\partial x_n \partial x_2} &amp; \cdots &amp; \frac{\partial^2
+f}{\partial x_n^2}
+\end{bmatrix}
+\]</span></p></li>
+<li><p><strong>为什么导数会形成矩阵</strong>：</p>
+<ul>
+<li><strong>一阶导数</strong>：对于多元函数，一阶导数是一个向量，称为梯度向量。梯度向量的每个元素是函数对各个变量的偏导数。</li>
+<li><strong>二阶导数</strong>：二阶导数描述的是梯度向量的变化率。由于梯度向量本身是一个向量，其变化率（即二阶导数）自然形成一个矩阵。这个矩阵就是
+Hessian 矩阵。</li>
+</ul></li>
+</ol>
+<h3 id="例子">例子</h3>
+<p>考虑一个二元函数 <span class="math inline">\(f(x, y)\)</span> ，其
+Hessian 矩阵为： <span class="math display">\[
+H = \begin{bmatrix}
+\frac{\partial^2 f}{\partial x^2} &amp; \frac{\partial^2 f}{\partial x
+\partial y} \\
+\frac{\partial^2 f}{\partial y \partial x} &amp; \frac{\partial^2
+f}{\partial y^2}
+\end{bmatrix}
+\]</span></p>
+<h3 id="作用">作用</h3>
+<ol type="1">
+<li><strong>凸性判断</strong>：
+<ul>
+<li>如果 Hessian 矩阵是正定的，则函数在该点是凸的，存在局部最小值。</li>
+<li>如果 Hessian 矩阵是负定的，则函数在该点是凹的，存在局部最大值。</li>
+<li>如果 Hessian 矩阵是不定的，则函数在该点是鞍点。</li>
+</ul></li>
+<li><strong>优化算法</strong>：
+<ul>
+<li>在优化问题中，Hessian
+矩阵用于牛顿法等二阶优化算法，以更快地收敛到最优解。</li>
+</ul></li>
+</ol>
+<h3 id="总结-2">总结</h3>
+<ul>
+<li><strong>二阶导数矩阵</strong>：描述了多元函数在各个方向上的曲率。</li>
+<li><strong>形成矩阵的原因</strong>：因为一阶导数（梯度）是一个向量，其变化率（二阶导数）自然形成一个矩阵。</li>
+</ul>
+<p>理解 Hessian
+矩阵有助于深入分析多元函数的性质，并在优化问题中找到最优解。</p>
+<h1 id="混合二阶偏导">混合二阶偏导</h1>
+<p>二阶导数可以先对其中一个变量求偏导然后第二阶的时候对另外一个变量求偏导？我以为是对同一个变量求两次倒数？?</p>
+<h3 id="二阶偏导数的理解">二阶偏导数的理解</h3>
+<p>在多元函数中，二阶偏导数确实可以涉及对不同的变量求导。具体来说：</p>
+<ol type="1">
+<li><strong>二阶偏导数的定义</strong>： 对于一个多元函数 <span
+class="math inline">\(f(x_1, x_2, \dots,
+x_n)\)</span>，二阶偏导数有两种形式：
+<ul>
+<li><strong>纯二阶偏导数</strong>：对同一个变量求两次偏导数，例如 <span
+class="math inline">\(\frac{\partial^2 f}{\partial x_i^2}\)</span></li>
+<li><strong>混合二阶偏导数</strong>：先对一个变量求偏导数，再对另一个变量求偏导数，例如
+<span class="math inline">\(\frac{\partial^2 f}{\partial x_i \partial
+x_j}\)</span></li>
+</ul></li>
+<li><strong>例子</strong>： 考虑一个二元函数 <span
+class="math inline">\(f(x, y)\)</span>，其二阶偏导数包括：
+<ul>
+<li>纯二阶偏导数：<span class="math inline">\(\frac{\partial^2
+f}{\partial x^2}\)</span> 和 <span
+class="math inline">\(\frac{\partial^2 f}{\partial y^2}\)</span></li>
+<li>混合二阶偏导数：<span class="math inline">\(\frac{\partial^2
+f}{\partial x \partial y}\)</span> 和 <span
+class="math inline">\(\frac{\partial^2 f}{\partial y \partial
+x}\)</span></li>
+</ul></li>
+<li><strong>混合偏导数的对称性</strong>： 在大多数情况下，如果函数 <span
+class="math inline">\(f\)</span>
+的二阶偏导数连续，则混合偏导数是相等的，即： <span
+class="math display">\[
+\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial^2
+f}{\partial y \partial x}
+\]</span> 这个性质称为 Schwarz 定理或 Clairaut 定理。</li>
+</ol>
+<h3 id="具体步骤">具体步骤</h3>
+<ol type="1">
+<li><p><strong>一阶偏导数</strong>： 首先计算函数 <span
+class="math inline">\(f(x, y)\)</span> 的一阶偏导数： <span
+class="math display">\[
+\frac{\partial f}{\partial x} \quad \text{和} \quad \frac{\partial
+f}{\partial y}
+\]</span></p></li>
+<li><p><strong>二阶偏导数</strong>： 然后对一阶偏导数再次求偏导数：</p>
+<ul>
+<li>纯二阶偏导数： <span class="math display">\[
+\frac{\partial^2 f}{\partial x^2} = \frac{\partial}{\partial x} \left(
+\frac{\partial f}{\partial x} \right)
+\]</span> <span class="math display">\[
+\frac{\partial^2 f}{\partial y^2} = \frac{\partial}{\partial y} \left(
+\frac{\partial f}{\partial y} \right)
+\]</span></li>
+<li>混合二阶偏导数： <span class="math display">\[
+\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial}{\partial y}
+\left( \frac{\partial f}{\partial x} \right)
+\]</span> <span class="math display">\[
+\frac{\partial^2 f}{\partial y \partial x} = \frac{\partial}{\partial x}
+\left( \frac{\partial f}{\partial y} \right)
+\]</span></li>
+</ul></li>
+</ol>
+<h2 id="几何意义">几何意义</h2>
+<p>以二维标准正态分布（高斯函数）的函数图形为例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> mpl_toolkits.mplot3d <span class="keyword">import</span> Axes3D</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义二维高斯函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_2d</span>(<span class="params">x, y, mu_x=<span class="number">0</span>, mu_y=<span class="number">0</span>, sigma_x=<span class="number">1</span>, sigma_y=<span class="number">1</span></span>):</span><br><span class="line">    <span class="keyword">return</span> np.exp(-((x - mu_x)**<span class="number">2</span> / (<span class="number">2</span> * sigma_x**<span class="number">2</span>) + (y - mu_y)**<span class="number">2</span> / (<span class="number">2</span> * sigma_y**<span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建网格数据</span></span><br><span class="line">x = np.linspace(-<span class="number">5</span>, <span class="number">5</span>, <span class="number">100</span>)</span><br><span class="line">y = np.linspace(-<span class="number">5</span>, <span class="number">5</span>, <span class="number">100</span>)</span><br><span class="line">x, y = np.meshgrid(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算高斯函数的值</span></span><br><span class="line">z = gaussian_2d(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 3D 图形</span></span><br><span class="line">fig = plt.figure()</span><br><span class="line">ax = fig.add_subplot(<span class="number">111</span>, projection=<span class="string">&#x27;3d&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制表面图</span></span><br><span class="line">surf = ax.plot_surface(x, y, z, cmap=<span class="string">&#x27;viridis&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加颜色条</span></span><br><span class="line">fig.colorbar(surf)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置坐标轴标签</span></span><br><span class="line">ax.set_xlabel(<span class="string">&#x27;X axis&#x27;</span>)</span><br><span class="line">ax.set_ylabel(<span class="string">&#x27;Y axis&#x27;</span>)</span><br><span class="line">ax.set_zlabel(<span class="string">&#x27;Z axis&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示图形</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="../../../images/Pasted%20image%2020250102150514.png" /></p>
+<h3 id="纯二阶偏导数">纯二阶偏导数</h3>
+<p>描绘了，当某个维度的变量取特定值时，比如 <span
+class="math inline">\(X\)</span> 变量取 <span
+class="math inline">\(x=0\)</span>
+时的这条横截面上的曲线的梯度变化速率情况，比如 <span
+class="math inline">\(x=0\)</span>
+时的横截面（以上图为例）就是波动最大的，因此其一阶导数变化速率也最大；当
+<span class="math inline">\(x=2\)</span>
+时，其图形的横截面曲线展现出来较为平缓，波峰不明显，则其一阶导数反应出横截面曲线各个位置的梯度也比较平缓，二阶导数反映出来一阶导数的变化情况就更平缓了。</p>
+<h3 id="混合二阶偏导数">混合二阶偏导数</h3>
+<p>描绘了由两个变量共同确定的某一点处的梯度变化速率的情况，注意这里是梯度变化速率，而不是因变量的变化速率，因变量变化速率等价于梯度，梯度变化速率才是二阶导描绘的。混合偏导是先对某一个变量求偏导，也就是确定了第一个变量决定的位置，然后再在第一个变量决定好的横截面曲线上由第二个变量决定位置。</p>
+<h3 id="总结-3">总结</h3>
+<ul>
+<li><strong>二阶偏导数</strong>：包括纯二阶偏导数和混合二阶偏导数。</li>
+<li><strong>混合偏导数</strong>：先对一个变量求偏导数，再对另一个变量求偏导数。</li>
+<li><strong>对称性</strong>：在大多数情况下，混合偏导数是相等的。</li>
+</ul>
+<p>理解这些概念有助于更全面地分析多元函数的性质，并在优化问题中找到最优解。</p>
+<p><img src="../../../images/Pasted%20image%2020250102150033.png" /></p>
+<p><strong>先求导的变量写在后面。</strong>
+这种记法是国际上公认的记法，包括 wiki 。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/03/11/index/" rel="prev" title="index">
+      <i class="fa fa-chevron-left"></i> index
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%92%8C%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92"><span class="nav-number">1.</span> <span class="nav-text">逻辑回归和线性回归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. 输出类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.3.</span> <span class="nav-text">3. 模型函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.4.</span> <span class="nav-text">4. 损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1"><span class="nav-number">1.0.5.</span> <span class="nav-text">5. 参数估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.0.6.</span> <span class="nav-text">6. 假设条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E5%85%B1%E7%BA%BF%E6%80%A7"><span class="nav-number">1.0.7.</span> <span class="nav-text">7. 多重共线性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">1.0.8.</span> <span class="nav-text">8. 正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.9.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E6%8E%A8%E5%B9%BF%E5%88%B0%E5%B9%BF%E4%B9%89%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92"><span class="nav-number">2.</span> <span class="nav-text">从线性回归推广到广义线性回归</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E4%B8%AD%E7%9A%84%E5%87%B8%E5%87%BD%E6%95%B0%E6%80%A7%E8%B4%A8%E4%B8%8E%E4%BA%8C%E9%98%B6%E5%AF%BC%E9%9B%B6%E7%82%B9"><span class="nav-number">3.</span> <span class="nav-text">理解最小二乘法中的凸函数性质与二阶导零点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">3.0.1.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8C%E9%98%B6%E5%AF%BC%E6%95%B0%E7%9F%A9%E9%98%B5%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BA%8C%E9%98%B6%E5%AF%BC%E6%95%B0%E4%BC%9A%E5%BD%A2%E6%88%90%E7%9F%A9%E9%98%B5"><span class="nav-number">4.</span> <span class="nav-text">什么是二阶导数矩阵？为什么二阶导数会形成矩阵？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E9%98%B6%E5%AF%BC%E6%95%B0%E7%9F%A9%E9%98%B5hessian-%E7%9F%A9%E9%98%B5"><span class="nav-number">4.0.1.</span> <span class="nav-text">二阶导数矩阵（Hessian 矩阵）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">4.0.2.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8"><span class="nav-number">4.0.3.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-2"><span class="nav-number">4.0.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E4%BA%8C%E9%98%B6%E5%81%8F%E5%AF%BC"><span class="nav-number">5.</span> <span class="nav-text">混合二阶偏导</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E9%98%B6%E5%81%8F%E5%AF%BC%E6%95%B0%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-number">5.0.1.</span> <span class="nav-text">二阶偏导数的理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4"><span class="nav-number">5.0.2.</span> <span class="nav-text">具体步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E6%84%8F%E4%B9%89"><span class="nav-number">5.1.</span> <span class="nav-text">几何意义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%AF%E4%BA%8C%E9%98%B6%E5%81%8F%E5%AF%BC%E6%95%B0"><span class="nav-number">5.1.1.</span> <span class="nav-text">纯二阶偏导数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E4%BA%8C%E9%98%B6%E5%81%8F%E5%AF%BC%E6%95%B0"><span class="nav-number">5.1.2.</span> <span class="nav-text">混合二阶偏导数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-3"><span class="nav-number">5.1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fu Guiduo</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fu Guiduo</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '32px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: '#fff',
+  backgroundColor: '#fff',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌗',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>
